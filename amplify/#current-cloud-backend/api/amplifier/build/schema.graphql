@@ -1,0 +1,216 @@
+type Book @aws_iam @aws_api_key {
+  id: ID!
+  title: String
+  isbn: String
+  pageCount: Int
+  publishedDate: AWSJSON
+  thumbnailUrl: AWSURL
+  shortDescription: String
+  longDescription: String
+  status: String
+  authors: [String]!
+  categories: [String]!
+  price: Float
+  quantity: Int
+  specialOffer: Boolean
+  _version: Int!
+  _deleted: Boolean
+  _lastChangedAt: AWSTimestamp!
+  createdAt: AWSDateTime!
+  updatedAt: AWSDateTime!
+}
+
+enum ModelSortDirection {
+  ASC
+  DESC
+}
+
+type ModelBookConnection @aws_api_key @aws_iam {
+  items: [Book]
+  nextToken: String
+  startedAt: AWSTimestamp
+}
+
+input ModelStringInput {
+  ne: String
+  eq: String
+  le: String
+  lt: String
+  ge: String
+  gt: String
+  contains: String
+  notContains: String
+  between: [String]
+  beginsWith: String
+  attributeExists: Boolean
+  attributeType: ModelAttributeTypes
+  size: ModelSizeInput
+}
+
+input ModelIDInput {
+  ne: ID
+  eq: ID
+  le: ID
+  lt: ID
+  ge: ID
+  gt: ID
+  contains: ID
+  notContains: ID
+  between: [ID]
+  beginsWith: ID
+  attributeExists: Boolean
+  attributeType: ModelAttributeTypes
+  size: ModelSizeInput
+}
+
+input ModelIntInput {
+  ne: Int
+  eq: Int
+  le: Int
+  lt: Int
+  ge: Int
+  gt: Int
+  between: [Int]
+  attributeExists: Boolean
+  attributeType: ModelAttributeTypes
+}
+
+input ModelFloatInput {
+  ne: Float
+  eq: Float
+  le: Float
+  lt: Float
+  ge: Float
+  gt: Float
+  between: [Float]
+  attributeExists: Boolean
+  attributeType: ModelAttributeTypes
+}
+
+input ModelBooleanInput {
+  ne: Boolean
+  eq: Boolean
+  attributeExists: Boolean
+  attributeType: ModelAttributeTypes
+}
+
+input ModelSizeInput {
+  ne: Int
+  eq: Int
+  le: Int
+  lt: Int
+  ge: Int
+  gt: Int
+  between: [Int]
+}
+
+input ModelBookFilterInput {
+  id: ModelIDInput
+  title: ModelStringInput
+  isbn: ModelStringInput
+  pageCount: ModelIntInput
+  publishedDate: ModelStringInput
+  thumbnailUrl: ModelStringInput
+  shortDescription: ModelStringInput
+  longDescription: ModelStringInput
+  status: ModelStringInput
+  authors: ModelStringInput
+  categories: ModelStringInput
+  price: ModelFloatInput
+  quantity: ModelIntInput
+  specialOffer: ModelBooleanInput
+  and: [ModelBookFilterInput]
+  or: [ModelBookFilterInput]
+  not: ModelBookFilterInput
+}
+
+enum ModelAttributeTypes {
+  binary
+  binarySet
+  bool
+  list
+  map
+  number
+  numberSet
+  string
+  stringSet
+  _null
+}
+
+type Query {
+  getBook(id: ID!): Book @aws_api_key @aws_iam
+  listBooks(filter: ModelBookFilterInput, limit: Int, nextToken: String): ModelBookConnection @aws_api_key @aws_iam
+  syncBooks(filter: ModelBookFilterInput, limit: Int, nextToken: String, lastSync: AWSTimestamp): ModelBookConnection @aws_api_key @aws_iam
+}
+
+input CreateBookInput {
+  id: ID
+  title: String
+  isbn: String
+  pageCount: Int
+  publishedDate: AWSJSON
+  thumbnailUrl: AWSURL
+  shortDescription: String
+  longDescription: String
+  status: String
+  authors: [String]!
+  categories: [String]!
+  price: Float
+  quantity: Int
+  specialOffer: Boolean
+  _version: Int
+}
+
+input UpdateBookInput {
+  id: ID!
+  title: String
+  isbn: String
+  pageCount: Int
+  publishedDate: AWSJSON
+  thumbnailUrl: AWSURL
+  shortDescription: String
+  longDescription: String
+  status: String
+  authors: [String]
+  categories: [String]
+  price: Float
+  quantity: Int
+  specialOffer: Boolean
+  _version: Int
+}
+
+input DeleteBookInput {
+  id: ID!
+  _version: Int
+}
+
+type Mutation {
+  createBook(input: CreateBookInput!, condition: ModelBookConditionInput): Book @aws_api_key @aws_iam
+  updateBook(input: UpdateBookInput!, condition: ModelBookConditionInput): Book @aws_api_key @aws_iam
+  deleteBook(input: DeleteBookInput!, condition: ModelBookConditionInput): Book @aws_api_key @aws_iam
+}
+
+input ModelBookConditionInput {
+  title: ModelStringInput
+  isbn: ModelStringInput
+  pageCount: ModelIntInput
+  publishedDate: ModelStringInput
+  thumbnailUrl: ModelStringInput
+  shortDescription: ModelStringInput
+  longDescription: ModelStringInput
+  status: ModelStringInput
+  authors: ModelStringInput
+  categories: ModelStringInput
+  price: ModelFloatInput
+  quantity: ModelIntInput
+  specialOffer: ModelBooleanInput
+  and: [ModelBookConditionInput]
+  or: [ModelBookConditionInput]
+  not: ModelBookConditionInput
+}
+
+type Subscription {
+  onCreateBook: Book @aws_subscribe(mutations: ["createBook"]) @aws_api_key @aws_iam
+  onUpdateBook: Book @aws_subscribe(mutations: ["updateBook"]) @aws_api_key @aws_iam
+  onDeleteBook: Book @aws_subscribe(mutations: ["deleteBook"]) @aws_api_key @aws_iam
+}
